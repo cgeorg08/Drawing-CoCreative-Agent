@@ -49,12 +49,42 @@ def draw(canvas,
         canvas.create_polygon(x1, y1, x2, y2, x3, y3, x4, y4, fill=selected_color, outline=selected_color)
 
 def get_random_starting_point(starts, ends, x_scale, y_scale, width, height):
+    choice = random.randint(0, 2)
     chosen_starting_point = random.choice(starts+ends)
     chosen_starting_point = list(chosen_starting_point)
-    chosen_starting_point[0] = chosen_starting_point[0] + random.randint(1, x_scale)
-    chosen_starting_point[1] = chosen_starting_point[1] + random.randint(1, y_scale)
-    chosen_starting_point[0] = chosen_starting_point[0] if chosen_starting_point[0] < width else width-50
-    chosen_starting_point[1] = chosen_starting_point[1] if chosen_starting_point[1] < height else height-50
+
+    # find the quarter
+    if chosen_starting_point[0] < width/2 and chosen_starting_point[1] < height/2:
+        quarter = 1
+    elif chosen_starting_point[0] < width/2 and chosen_starting_point[1] > height/2:
+        quarter = 3
+    elif chosen_starting_point[0] > width/2 and chosen_starting_point[1] < height/2:
+        quarter = 2
+    else:
+        quarter = 4
+
+    # do a random action
+    if choice >= 0 and choice <= 1:
+        quarters = [1, 2, 3, 4]
+        quarters.remove(quarter)
+        target_quarter = random.choice(quarters)
+        if target_quarter == 1:
+            chosen_starting_point[0] = width/2 - abs(chosen_starting_point[0] - width/2)
+            chosen_starting_point[1] = height/2 - abs(chosen_starting_point[1] - height/2)
+        elif target_quarter == 2:
+            chosen_starting_point[0] = width/2 + abs(chosen_starting_point[0] - width/2)
+            chosen_starting_point[1] = height/2 - abs(chosen_starting_point[1] - height/2)
+        elif target_quarter == 3:
+            chosen_starting_point[0] = width/2 - abs(chosen_starting_point[0] - width/2)
+            chosen_starting_point[1] = height/2 + abs(chosen_starting_point[1] - height/2)
+        else:
+            chosen_starting_point[0] = width/2 + abs(chosen_starting_point[0] - width/2)
+            chosen_starting_point[1] = height/2 + abs(chosen_starting_point[1] - height/2)
+    else:
+        chosen_starting_point[0] = chosen_starting_point[0] + random.randint(1, x_scale)
+        chosen_starting_point[1] = chosen_starting_point[1] + random.randint(1, y_scale)
+        chosen_starting_point[0] = chosen_starting_point[0] if chosen_starting_point[0] < width else width-50
+        chosen_starting_point[1] = chosen_starting_point[1] if chosen_starting_point[1] < height else height-50
     return chosen_starting_point
 
 def get_novel_goal(canvas_points, width, height):
